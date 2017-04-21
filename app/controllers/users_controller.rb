@@ -25,6 +25,11 @@ class UsersController < ApplicationController
     render :show
   end
 
+  def edit
+    @user = User.find_by(id: params[:id])
+    render :edit
+  end
+
   private
   def user_params
     params.require(:user).permit(:name, :password)
