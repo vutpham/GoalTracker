@@ -6,6 +6,8 @@ class User < ApplicationRecord
   validates :password_digest, presence: true
   validates :password, length: { minimum: 6, allow_nil: true }
 
+  after_initialize :ensure_session_token
+
   def password=(password)
     @password = password
 
@@ -18,9 +20,8 @@ class User < ApplicationRecord
 
   def generate_session_token
     self.session_token = SecureRandom.urlsafe_base64(16)
-    self.save
-    self.session_token
   end
+
 
   def self.find_by_credentials(name, password)
     raise "Must provide password" if password.length == 0
@@ -30,6 +31,12 @@ class User < ApplicationRecord
     # return user if BCrypt::Password.new(user.password_digest).is_password?(password)
      return user if user.is_password?(password)
     nil
+  end
+
+  private
+
+  def ensure_session_token
+    self.session_token ||= self.generate_session_token
   end
 
 end

@@ -42,6 +42,7 @@ RSpec.describe User, type: :model do
       expect((user).is_password?('wrong_password')).to eq(false)
     end
   end
+  
   describe "#generate_session_token" do
     it 'should create a new session_token' do
       token = user.session_token
