@@ -17,11 +17,36 @@ RSpec.describe User, type: :model do
 
   describe '#find_by_credentials' do
     it 'should be able to take in name and password' do
-      expect{ User.find_by_credentials(name: 'name') }.to raise_error("Must provide password")
-      expect{ User.find_by_credentials(password: 'password') }.to raise_error("Must provide user_name")
+      expect{ User.find_by_credentials('name', "") }.to raise_error("Must provide password")
+      expect{ User.find_by_credentials("", 'password') }.to raise_error("Must provide user_name")
     end
     it "should return a user" do
-      expect(User.find_by_credentials(name: 'SuccessGuy', password: 'password')).to be(User.first)
+      User.create(name: 'SuccessGuy',
+      password: 'password',
+      session_token: "AqnwDefnas" )
+
+      expect(User.find_by_credentials('SuccessGuy', 'password')).to eq(User.first)
     end
+  end
+
+  describe "#is_password?" do
+    subject("user") {
+      User.new(name: 'SuccessGuy',
+      password: 'password',
+      session_token: "AqnwDefnas" )
+    }
+    it 'should return true if password is correct' do
+      expect(user.is_password?('password')).to eq(true)
+    end
+    it 'should return false if password is incorrect' do
+      expect((user).is_password?('wrong_password')).to eq(false)
+    end
+  end
+  describe "#generate_session_token" do
+    it 'should create a new session_token' do
+      token = user.session_token
+      expect(user.generate_session_token.session_token).not_to eq(token)
+    end
+
   end
 end
