@@ -16,7 +16,11 @@ class User < ApplicationRecord
     BCrypt::Password.new(self.password_digest).is_password?(password)
   end
 
-  
+  def generate_session_token
+    self.session_token = SecureRandom.urlsafe_base64(16)
+    self.save
+    self.session_token
+  end
 
   def self.find_by_credentials(name, password)
     raise "Must provide password" if password.length == 0

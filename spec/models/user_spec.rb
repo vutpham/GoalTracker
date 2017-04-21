@@ -45,7 +45,8 @@ RSpec.describe User, type: :model do
   describe "#generate_session_token" do
     it 'should create a new session_token' do
       token = user.session_token
-      expect(user.generate_session_token.session_token).not_to eq(token)
+      user.generate_session_token
+      expect(user.session_token).not_to eq(token)
     end
 
   end
