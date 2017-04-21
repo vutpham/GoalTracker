@@ -51,14 +51,44 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "PATCH #update" do
-    it "should update a user in the database"
-    it "should redirect to user_url upon update"
-    it "should render an error if update fails"
-    it "should redirect to edit_user_url if update fails"
+    before(:each) do
+      User.create(name: "Bubbles", password: "password")
+    end
+    it "should update a user in the database" do
+      patch(:update, params: { id: User.first.id, user: { name: "Mike"} })
+      user = User.first
+
+      expect(user.name).to eq('Mike')
+    end
+    it "should redirect to user_url upon update" do
+      patch(:update, params: { id: User.first.id, user: { name: "Mike"} })
+      expect(response).to redirect_to(user_url(User.first.id))
+    end
+    it "should render an error if user does not exist" do
+      patch(:update, params: { id: -1, user: { name: "Mike"} })
+      expect(controller).to set_flash[:errors]
+    end
+    it "should render an error if updated password is invalid" do
+      patch(:update, params: { id: User.first.id, user: { name: "Mike", password: 'pass'} })
+      expect(controller).to set_flash[:errors]
+    end
+    it "should redirect to new_user_url if update fails" do
+      patch(:update, params: { id: -1, user: { name: "Mike"} })
+      expect(response).to redirect_to(new_user_url)
+    end
   end
 
   describe "DELETE #destroy" do
-    it "should delete a user from the database"
-    it "should redirect to users_url"
+    it "should delete a user from the database" do
+      User.create(name: "Bubbles", password: "password")
+      User.create(name: "Roderick", password: "password")
+      delete(:destroy, params: { id: User.first.id })
+      expect(User.all).not_to include(User.find_by(name: 'Bubbles'))
+    end
+    it "should redirect to users_url" do
+      User.create(name: "Bubbles", password: "password")
+      delete(:destroy, params: {id: User.first.id})
+      expect(response).to redirect_to(users_url)
+    end
   end
 end

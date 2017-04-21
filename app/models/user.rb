@@ -8,6 +8,12 @@ class User < ApplicationRecord
 
   after_initialize :ensure_session_token
 
+  has_many :goals,
+    primary_key: :id,
+    foreign_key: :user_id,
+    class_name: 'Goal',
+    dependent: :destroy
+
   def password=(password)
     @password = password
 
