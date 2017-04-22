@@ -2,11 +2,21 @@
 <html>
   <head>
     <title>GoalTracker</title>
+
+    <% if current_user %>
+    <h1> <%= "Welcome, #{current_user.name}!!!" %> </h1>
+    <form class="" action="<%= session_url %>" method="post">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+      <%= button_to "logout", method: :delete%>
+    </form>
+    <% end %>
+
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
   </head>
+
 
   <body>
     <%= yield %>
